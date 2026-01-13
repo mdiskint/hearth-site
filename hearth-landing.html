@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hearth — Identity Layer for AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #121212;
+            --bg-surface: #1a1a1a;
+            --bg-elevated: #222222;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --text-muted: #555555;
+            --accent: #e89830;
+            --accent-red: #e85a30;
+            --accent-dim: #d08528;
+            --accent-glow: rgba(232, 120, 48, 0.25);
+            --accent-gradient: linear-gradient(135deg, #e89830 0%, #e85a30 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Source Sans 3', -apple-system, sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Subtle noise texture */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.03;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 0 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header */
+        header {
+            padding: 48px 0 0;
+        }
+
+        .logo {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Hero */
+        .hero {
+            padding: 80px 0 60px;
+        }
+
+        h1 {
+            font-family: 'Fraunces', serif;
+            font-size: clamp(2.5rem, 6vw, 3.5rem);
+            font-weight: 400;
+            line-height: 1.15;
+            letter-spacing: -0.03em;
+            margin-bottom: 24px;
+        }
+
+        h1 .accent {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tagline {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 540px;
+            margin-bottom: 40px;
+        }
+
+        /* CTA */
+        .cta-group {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--accent-gradient);
+            color: var(--bg-deep);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #f0a840 0%, #f06a40 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px var(--accent-glow);
+        }
+
+        .btn-secondary {
+            background: var(--bg-elevated);
+            color: var(--text-primary);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .btn-secondary:hover {
+            background: #2a2a2a;
+            border-color: rgba(255,255,255,0.12);
+        }
+
+        .btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* What it does */
+        .features {
+            padding: 60px 0;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 32px;
+            color: var(--text-primary);
+        }
+
+        .feature-grid {
+            display: grid;
+            gap: 24px;
+        }
+
+        .feature {
+            background: var(--bg-surface);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .feature-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Install */
+        .install {
+            padding: 60px 0;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        .install-steps {
+            background: var(--bg-surface);
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 12px;
+            padding: 28px;
+        }
+
+        .step {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-num {
+            width: 28px;
+            height: 28px;
+            background: var(--bg-elevated);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .step-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        code {
+            background: var(--bg-deep);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.85em;
+            color: var(--accent);
+        }
+
+        /* Footer */
+        footer {
+            padding: 60px 0;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            text-align: center;
+        }
+
+        .footer-text {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .footer-text a {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .footer-text a:hover {
+            color: var(--accent);
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero, .features, .install {
+            animation: fadeUp 0.6s ease-out backwards;
+        }
+
+        .features {
+            animation-delay: 0.1s;
+        }
+
+        .install {
+            animation-delay: 0.2s;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .cta-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <span style="font-size: 1.4rem;">🔥</span>
+                Hearth
+            </div>
+        </header>
+
+        <section class="hero">
+            <h1>AI that remembers <span class="accent">who you are</span></h1>
+            <p class="tagline">An identity layer for language models. Hearth injects your memories, preferences, and values into every conversation — so AI actually knows you, not just what you asked.</p>
+            <div class="cta-group">
+                <a href="https://github.com/YOUR_USERNAME/hearth" class="btn btn-primary" target="_blank">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+                    View on GitHub
+                </a>
+                <a href="mailto:michael@hearth.so" class="btn btn-secondary">
+                    Get in touch
+                </a>
+            </div>
+        </section>
+
+        <section class="features">
+            <h2>What Hearth does</h2>
+            <div class="feature-grid">
+                <div class="feature">
+                    <div class="feature-title">Identity injection</div>
+                    <div class="feature-desc">Your preferences, communication style, values, and context get injected into every AI conversation. No more starting from scratch.</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-title">Constitutional constraints</div>
+                    <div class="feature-desc">Define what the AI should and shouldn't do. Hearth enforces your principles, not the platform's engagement metrics.</div>
+                </div>
+                <div class="feature">
+                    <div class="feature-title">Memory that matters</div>
+                    <div class="feature-desc">Not just what you said, but who you are. Structured memory that shapes behavior, not just retrieves facts.</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="install">
+            <h2>Install (Developer Preview)</h2>
+            <div class="install-steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <div class="step-content">
+                        <div class="step-title">Clone the repo</div>
+                        <div class="step-desc">Download or clone from GitHub to your local machine.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <div class="step-content">
+                        <div class="step-title">Open Chrome Extensions</div>
+                        <div class="step-desc">Navigate to <code>chrome://extensions</code> and enable Developer Mode (top right).</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <div class="step-content">
+                        <div class="step-title">Load unpacked</div>
+                        <div class="step-desc">Click "Load unpacked" and select the Hearth extension folder.</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-num">4</div>
+                    <div class="step-content">
+                        <div class="step-title">Configure your identity</div>
+                        <div class="step-desc">Open the extension popup and complete the onboarding to set up your profile.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p class="footer-text">Built by <a href="https://linkedin.com/in/YOUR_LINKEDIN">Michael Diskint</a> · <a href="mailto:michael@hearth.so">michael@hearth.so</a></p>
+        </footer>
+    </div>
+</body>
+</html>
